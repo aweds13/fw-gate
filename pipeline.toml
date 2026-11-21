@@ -1,0 +1,70 @@
+# pipeline.toml —— framework 独立仓**自己的**项目配置（卡 181 §②）
+#
+# 用它自己的机制（`pipe gate` / `pipe doctor`）跑它自己的门：
+#   python cli/main.py --config pipeline.toml gate
+#   python cli/main.py --config pipeline.toml doctor
+#
+# 口径：项目专有值一律在这里，不进框架代码（提升就绪 P3）。
+# 路径不必预先存在（`gate` 只写 gates_state / logs_dir / junit_dir，并自动建目录）。
+
+[meta]
+schema_version = "0.1.0"
+framework_version = "0.1.0"
+project_id = "framework"
+project_name = "framework（可带走的管线）"
+repo_root = "."
+default_branch = "main"
+
+[paths]
+ledger = ".pipe/ledger.toml"
+invariants = ".pipe/invariants.toml"
+evidence_dir = ".pipe/evidence"
+logs_dir = ".pipe/logs"
+gates_state = ".pipe/last.json"
+gates_reuse = ".pipe/reuse.json"
+
+[cards]
+cards_dir = ".pipe/cards"
+spec_template = "templates/minimal/card-template.md"
+backlog = ".pipe/backlog.toml"
+claims_dir = ".pipe/claims"
+authoritative_domains = ".pipe/backlog.toml"
+
+[gates]
+gates_dir = "gates.d"
+
+[resource]
+min_free_gb = 1.0
+max_concurrent_gates = 2
+port_base = 8531
+port_band = 16
+pytest_workers = 0
+gate_lock_stale_s = 10800
+
+[workers]
+model_allowlist = ["deepseek-v4.1-flash", "glm-5.3-flash"]
+default_model = "deepseek-v4.1-flash"
+max_turns_write = 240
+max_turns_readonly = 80
+watchdog_stall_s = 480
+watchdog_busy_stall_s = 1800
+watchdog_adaptive_max_s = 3600
+heartbeat_s = 120
+autocompact = "1m"
+
+[exit_codes]
+table_version = "0.1.0"
+
+[events]
+format = "ndjson"
+source_uri = "pipe://framework"
+ndjson_path = ".pipe/evidence/events.ndjson"
+
+[reports]
+sarif_dir = ".pipe/evidence/sarif"
+junit_dir = ".pipe/evidence/junit"
+coverage_format = "cobertura"
+
+[seal]
+ignore = [".pipe/**", "*.pyc", "__pycache__/**"]
+algorithm = "sha256"

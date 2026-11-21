@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://framework.invalid/pipe/pipeline.schema.json",
+  "title": "pipeline.toml",
+  "description": "框架的配置 schema（JSON Schema 2020-12 骨架）。全部层 additionalProperties=false：拼错键当场拒。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["meta", "paths", "cards", "gates", "workers", "exit_codes"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "framework_version", "project_id"],
+      "properties": {
+        "schema_version": { "type": "string" },
+        "framework_version": { "type": "string" },
+        "project_id": { "type": "string", "minLength": 1 },
+        "project_name": { "type": "string" },
+        "repo_root": { "type": "string", "default": "." },
+        "default_branch": { "type": "string", "default": "main" }
+      }
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ledger", "invariants", "evidence_dir", "logs_dir", "gates_state", "gates_reuse"],
+      "properties": {
+        "ledger": { "type": "string" },
+        "invariants": { "type": "string" },
+        "evidence_dir": { "type": "string" },
+        "logs_dir": { "type": "string" },
+        "gates_state": { "type": "string" },
+        "gates_reuse": { "type": "string" }
+      }
+    },
+    "cards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cards_dir", "spec_template", "backlog", "claims_dir", "authoritative_domains"],
+      "properties": {
+        "cards_dir": { "type": "string" },
+        "spec_template": { "type": "string" },
+        "backlog": { "type": "string" },
+        "claims_dir": { "type": "string" },
+        "authoritative_domains": { "type": "string" }
+      }
+    },
+    "gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gates_dir"],
+      "properties": {
+        "gates_dir": { "type": "string" }
+      },
+      "patternProperties": {
+        "^(?!gates_dir$).+$": { "$ref": "#/$defs/gate" }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["port_band"],
+      "properties": {
+        "min_free_gb": { "type": "number", "default": 4.0 },
+        "max_concurrent_gates": { "type": "integer", "default": 2 },
+        "port_base": { "type": "integer", "default": 8531 },
+        "port_band": { "type": "integer" },
+        "pytest_workers": { "type": "integer", "default": 0 },
+        "gate_lock_stale_s": { "type": "integer", "default": 10800 }
+      }
+    },
+    "workers": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_allowlist", "default_model"],
+      "properties": {
+        "model_allowlist": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "default_model": { "type": "string" },
+        "max_turns_write": { "type": "integer", "default": 240 },
+        "max_turns_readonly": { "type": "integer", "default": 80 },
+        "watchdog_stall_s": { "type": "integer", "default": 480 },
+        "watchdog_busy_stall_s": { "type": "integer", "default": 1800 },
+        "watchdog_adaptive_max_s": { "type": "integer", "default": 3600 },
+        "heartbeat_s": { "type": "integer", "default": 120 },
+        "autocompact": { "type": "string", "default": "1m" }
+      }
+    },
+    "exit_codes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["table_version"],
+      "properties": {
+        "table_version": { "type": "string" },
+        "table_path": { "type": "string" }
+      }
+    },
+    "events": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "format": { "type": "string", "enum": ["ndjson", "cloudevents"], "default": "ndjson" },
+        "source_uri": { "type": "string" },
+        "ndjson_path": { "type": "string" }
+      }
+    },
+    "reports": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sarif_dir": { "type": "string" },
+        "junit_dir": { "type": "string" },
+        "coverage_format": { "type": "string", "enum": ["cobertura", "lcov"], "default": "cobertura" }
+      }
+    },
+    "seal": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ignore": { "type": "array", "items": { "type": "string" } },
+        "algorithm": { "type": "string", "enum": ["sha256"], "default": "sha256" }
+      }
+    }
+  },
+  "$defs": {
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cmd", "inputs", "nail", "reuse", "stage", "timeout_s"],
+      "properties": {
+        "cmd": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "inputs": { "type": "array", "items": { "type": "string" } },
+        "nail": { "type": "string", "minLength": 1 },
+        "reuse": { "type": "string", "enum": ["hash", "never"] },
+        "stage": { "type": "string", "enum": ["light", "real", "browser"] },
+        "timeout_s": { "type": "integer", "minimum": 1 },
+        "exit_ok": { "type": "array", "items": { "type": "integer" }, "minItems": 1, "default": [0] },
+        "blocking": { "type": "boolean", "default": true },
+        "emits": { "type": "array", "items": { "type": "string" } },
+        "needs_runtime": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

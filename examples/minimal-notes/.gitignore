@@ -1,0 +1,6 @@
+# 运行产物（证据 / 日志 / 状态 / 申报）—— 不进版本管理
+.pipe/
+
+__pycache__/
+*.pyc
+.pytest_cache/

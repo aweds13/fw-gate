@@ -1,0 +1,14 @@
+# 一道门 —— 跑本仓测试，出 JUnit XML。
+
+[gate]
+name = "tests"
+cmd = ["python", "-m", "pytest", "tests", "-q", "--junitxml=.pipe/evidence/junit/tests.xml"]
+inputs = ["src/**", "tests/**", "pipeline.toml"]
+nail = "tests/test_nail_sample.py::test_nail_rejects_empty_keyword"
+reuse = "never"
+stage = "light"
+timeout_s = 120
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

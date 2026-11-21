@@ -1,0 +1,15 @@
+# 门 4 —— 泛用性：全框架目录不许出现任何项目专有名（命中数必须为 0）。
+# 反例钉子：检测器必须咬得住一个合成命中，否则「0 命中」是恒真。
+
+[gate]
+name = "genericity"
+cmd = ["python", "-m", "pytest", "tests/test_genericity.py", "-q", "--junitxml=.pipe/evidence/junit/genericity.xml"]
+inputs = ["pipeline.schema.json", "templates/**", "src/**", "cli/**", "tests/test_genericity.py"]
+nail = "tests/test_genericity.py::test_detector_has_teeth"
+reuse = "never"
+stage = "light"
+timeout_s = 300
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

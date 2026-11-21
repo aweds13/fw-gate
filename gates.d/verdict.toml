@@ -1,0 +1,15 @@
+# 门 2 —— 三值判决：空集（一条样例都没收集到）判 inconclusive，绝不是绿。
+# 反例钉子：真跑一个「收集 0 条」的夹具，断言判决 == inconclusive（不是 pass / 不是 not-run）。
+
+[gate]
+name = "verdict"
+cmd = ["python", "-m", "pytest", "tests/test_verdict.py", "-q", "--junitxml=.pipe/evidence/junit/verdict.xml"]
+inputs = ["src/framework/gates.py", "tests/test_verdict.py", "tests/fixtures/empty_collector.py"]
+nail = "tests/test_verdict.py::test_empty_collection_is_inconclusive_not_green"
+reuse = "never"
+stage = "light"
+timeout_s = 300
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

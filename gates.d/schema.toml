@@ -1,0 +1,15 @@
+# 门 1 —— schema 校验：pipeline.toml 缺键 / 拼错 / 坏 TOML 一律明确报错（不静默兜底）。
+# 反例钉子：喂一份坏 TOML，断言配置加载会把它逮住（失败即门失效）。
+
+[gate]
+name = "schema"
+cmd = ["python", "-m", "pytest", "tests/test_config.py", "-q", "--junitxml=.pipe/evidence/junit/schema.xml"]
+inputs = ["src/framework/config.py", "pipeline.schema.json", "pipeline.toml", "tests/test_config.py"]
+nail = "tests/test_config.py::test_bad_toml_reports_explicitly"
+reuse = "never"
+stage = "light"
+timeout_s = 300
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "framework"
+version = "0.1.0"
+description = "可带走的管线：核心库 + 薄 CLI（配置加载 / 门运行器 / 三值判决 / 唯一退出码表）"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dependencies = []
+
+[project.scripts]
+pipe = "cli.main:main"
+
+# 核心库在 src/，薄 CLI 在 cli/ —— 两个包都装（CLI 是独立顶层包，删掉它库仍可用）。
+[tool.setuptools]
+packages = ["framework", "cli"]
+package-dir = { framework = "src/framework", cli = "cli" }
+
+[tool.setuptools.package-data]
+framework = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

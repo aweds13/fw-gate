@@ -1,0 +1,14 @@
+# 追溯矩阵（RTM 半）—— 空骨架。
+#
+# 每条目（放在 [entries.<id>] 下）：
+#   title    = 一句话
+#   status   = done / partial / todo / deferred / broken（只有这五个）
+#   evidence = 机器可求值的断言列表（file: / text: / route: / test: ...）
+#   gaps     = 边界与「没做的事」（非 done 必填）
+#
+# ★ 只许在文件末尾追加自己的条目；既有条目一个字不动。
+
+[meta]
+schema_version = "0.1.0"
+
+[entries]

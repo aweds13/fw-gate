@@ -1,0 +1,63 @@
+# pipeline.toml —— examples/minimal-notes（一个独立于具体产品的最小仓，验证泛用性）
+
+[meta]
+schema_version = "0.1.0"
+framework_version = "0.1.0"
+project_id = "minimal-notes"
+project_name = "最小记事仓"
+repo_root = "."
+default_branch = "main"
+
+[paths]
+ledger = "ledger.toml"
+invariants = "invariants.toml"
+evidence_dir = ".pipe/evidence"
+logs_dir = ".pipe/logs"
+gates_state = ".pipe/last.json"
+gates_reuse = ".pipe/reuse.json"
+
+[cards]
+cards_dir = "cards"
+spec_template = "card-template.md"
+backlog = "backlog.toml"
+claims_dir = ".pipe/claims"
+authoritative_domains = "backlog.toml"
+
+[gates]
+gates_dir = "gates.d"
+
+[resource]
+min_free_gb = 1.0
+max_concurrent_gates = 2
+port_base = 8531
+port_band = 16
+pytest_workers = 0
+gate_lock_stale_s = 10800
+
+[workers]
+model_allowlist = ["deepseek-v4.1-flash", "glm-5.3-flash"]
+default_model = "deepseek-v4.1-flash"
+max_turns_write = 240
+max_turns_readonly = 80
+watchdog_stall_s = 480
+watchdog_busy_stall_s = 1800
+watchdog_adaptive_max_s = 3600
+heartbeat_s = 120
+autocompact = "1m"
+
+[exit_codes]
+table_version = "0.1.0"
+
+[events]
+format = "ndjson"
+source_uri = "pipe://minimal-notes"
+ndjson_path = ".pipe/evidence/events.ndjson"
+
+[reports]
+sarif_dir = ".pipe/evidence/sarif"
+junit_dir = ".pipe/evidence/junit"
+coverage_format = "cobertura"
+
+[seal]
+ignore = [".pipe/**", "*.pyc", "__pycache__/**"]
+algorithm = "sha256"

@@ -1,0 +1,17 @@
+# 一道门 —— 跑本仓测试，并出标准产物 JUnit XML（[reports].junit_dir = .pipe/evidence/junit）。
+#
+# ★ 判据随件走：`nail` 必填（本仓的老规矩：没有反例钉子的门不许进门）。
+# ★ pytest 类门 `reuse = "never"`：复用通过 ≠ 现在是绿的（INV-24）。
+
+[gate]
+name = "tests"
+cmd = ["python", "-m", "pytest", "tests", "-q", "--junitxml=.pipe/evidence/junit/tests.xml"]
+inputs = ["src/**", "tests/**", "pipeline.toml"]
+nail = "tests/test_nail_sample.py::test_broken_pointer_is_rejected"
+reuse = "never"
+stage = "light"
+timeout_s = 120
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

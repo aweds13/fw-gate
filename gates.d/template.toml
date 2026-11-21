@@ -1,0 +1,15 @@
+# 门 5 —— 模板仓：`pipe init` 铺到一个新目录能跑通，且幂等（第二次明确拒绝 / --force 逐字节相同）。
+# 反例钉子：第二次 init 必须明确拒绝（退出码 5），绝不悄悄覆盖。
+
+[gate]
+name = "template"
+cmd = ["python", "-m", "pytest", "tests/test_scaffold.py", "-q", "--junitxml=.pipe/evidence/junit/template.xml"]
+inputs = ["src/framework/scaffold.py", "templates/**", "tests/test_scaffold.py"]
+nail = "tests/test_scaffold.py::test_init_writes_files_and_refuses_second_time"
+reuse = "never"
+stage = "light"
+timeout_s = 300
+exit_ok = [0]
+blocking = true
+emits = ["junit"]
+needs_runtime = ["python"]

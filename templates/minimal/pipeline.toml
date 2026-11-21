@@ -1,0 +1,68 @@
+# pipeline.toml —— 唯一外置「项目相关值」的地方（照骨架设计 §② 与 §追加 C.3 P3）
+#
+# 口径：
+#   · 路径一律相对 repo_root；项目专有路径只许出现在这里，不进框架代码。
+#   · schema 校验严格：缺键 / 拼错 / 未知键一律明确报错（不当默认值兜底）。
+#   · 中文正文一律用「」，本文件不写裸 ASCII 双引号。
+
+[meta]
+schema_version = "0.1.0"      # 配置 schema 版本（主版本不符 → 拒跑）
+framework_version = "0.1.0"   # 写这份配置时所用框架版本
+project_id = "minimal"
+project_name = "最小模板仓"
+repo_root = "."               # 一切相对路径以此为基准
+default_branch = "main"
+
+[paths]
+ledger = "ledger.toml"        # 追溯矩阵（RTM 半）
+invariants = "invariants.toml"  # 不变式登记册
+evidence_dir = ".pipe/evidence"  # 证据 / 留痕目录（输出面）
+logs_dir = ".pipe/logs"       # 每道门的全量输出
+gates_state = ".pipe/last.json"   # 门禁结构化产物
+gates_reuse = ".pipe/reuse.json"  # 增量执行记录
+
+[cards]
+cards_dir = "cards"           # 工作项（卡）目录
+spec_template = "card-template.md"  # 卡规格模板（§0–§7 骨架）
+backlog = "backlog.toml"      # 排班表
+claims_dir = ".pipe/claims"   # 完成申报目录（归集屏障的输入）
+authoritative_domains = "backlog.toml"  # 权威域来源（单一真源）
+
+[gates]
+gates_dir = "gates.d"         # 目录式声明：一个门一个文件（追加式改动，冲突面最小）
+
+[resource]
+min_free_gb = 1.0             # 内存闸阈值
+max_concurrent_gates = 2      # 全局并发上限
+port_base = 8531              # 端口段基
+port_band = 16                # 段跨度：必须整段 base..base+band 空闲（铁律 37）
+pytest_workers = 0            # 0 = min(4, cpu)
+gate_lock_stale_s = 10800     # 门锁租约秒
+
+[workers]
+model_allowlist = ["deepseek-v4.1-flash", "glm-5.3-flash"]  # 有序白名单；表外拒单
+default_model = "deepseek-v4.1-flash"   # 必须逐字命中白名单
+max_turns_write = 240
+max_turns_readonly = 80
+watchdog_stall_s = 480
+watchdog_busy_stall_s = 1800
+watchdog_adaptive_max_s = 3600
+heartbeat_s = 120
+autocompact = "1m"
+
+[exit_codes]
+table_version = "0.1.0"       # 引用框架内置的唯一退出码表
+
+[events]
+format = "ndjson"             # ndjson / cloudevents
+source_uri = "pipe://minimal"
+ndjson_path = ".pipe/evidence/events.ndjson"
+
+[reports]
+sarif_dir = ".pipe/evidence/sarif"
+junit_dir = ".pipe/evidence/junit"
+coverage_format = "cobertura"
+
+[seal]
+ignore = [".pipe/**", "*.pyc", "__pycache__/**"]
+algorithm = "sha256"

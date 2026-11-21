@@ -1,0 +1,14 @@
+# 不变式登记册 —— 空骨架。
+#
+# 每条不变式（放在 [invariants.<id>] 下）：
+#   claim  = 一句话（断言什么永远成立）
+#   judge  = 怎么判（命令 / 判据）
+#   nail   = 反例钉子（故意坏掉必须被逮住的用例名）
+#   status = enforced / partial / missing
+#
+# ★ 新能力没进表就不算做完（照抽取清单 #99）。
+
+[meta]
+schema_version = "0.1.0"
+
+[invariants]
